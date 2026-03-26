@@ -21,8 +21,19 @@ model User {
   name           String
   profile_url    String?
   favorite_movie String?
-  
+  facts          Fact[]
 
   @@map("users")
 }
 
+model Fact {
+  id             String  @id @default(uuid())
+  user_id        String
+  movie          String
+  fact           String
+  created_at     DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@map("facts")
+}

@@ -1,19 +1,27 @@
-import { signOut } from "@/app/lib/auth";
+import { getSession } from "@/app/lib/session";
+import { prisma } from "@/app/lib/db";
+import { redirect } from "next/navigation";
+import { ProfileCard } from "@/app/components/ProfileCard";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const session = await getSession();
+  if (!session) redirect("/");
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.userId },
+  });
+
+  if (!user) redirect("/");
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <form action={signOut} className="mt-4">
-          <button
-            type="submit"
-            className="cursor-pointer rounded-lg bg-red-500 px-4 py-2 text-sm text-white transition hover:bg-red-600"
-          >
-            Sign out
-          </button>
-        </form>
-      </div>
-    </div>
+    <ProfileCard
+      user={{
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        profile_url: user.profile_url,
+        favorite_movie: user.favorite_movie,
+      }}
+    />
   );
 }

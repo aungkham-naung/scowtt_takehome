@@ -1,15 +1,38 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useEffect } from "react";
 import { saveFavoriteMovie, signOut } from "@/app/lib/auth";
+
+function OnboardingSkeleton() {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+        <div className="h-7 w-32 animate-pulse rounded bg-gray-200" />
+        <div className="mt-3 h-4 w-64 animate-pulse rounded bg-gray-200" />
+        <div className="mt-8">
+          <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+          <div className="mt-2 h-10 w-full animate-pulse rounded-lg bg-gray-200" />
+        </div>
+        <div className="mt-6 h-10 w-full animate-pulse rounded-lg bg-gray-200" />
+        <div className="mt-3 h-8 w-full animate-pulse rounded-lg bg-gray-100" />
+      </div>
+    </div>
+  );
+}
 
 export default function OnboardingPage() {
   const [movie, setMovie] = useState("");
   const [clientError, setClientError] = useState("");
+  const [loading, setLoading] = useState(true);
   const [serverState, formAction, pending] = useActionState(
     saveFavoriteMovie,
     undefined,
   );
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   const trimmed = movie.trim();
 
@@ -32,6 +55,10 @@ export default function OnboardingPage() {
   }
 
   const error = clientError || serverState?.error;
+
+  if (loading) {
+    return <OnboardingSkeleton />;
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm">
