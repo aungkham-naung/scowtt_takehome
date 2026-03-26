@@ -258,7 +258,7 @@ export function ProfileCard({ user: initialUser }: { user: UserResponse }) {
                 </p>
               </div>
               <button
-                onClick={() => fetchFact(true)}
+                onClick={() => fetchFact()}
                 className="mt-3 cursor-pointer text-xs font-medium text-purple-500 transition hover:text-purple-700"
               >
                 Generate another
